@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,227 +7,307 @@
 <title>Route Finder & Contact Lookup</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:linear-gradient(135deg,#eaf4ff,#f7fbff);
-    color:#17324d
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#eaf4ff,#f7fbff);
+  color:#17324d;
 }
 
 .container{
-    max-width:1050px;
-    margin:auto;
-    padding:24px
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
 }
 
 header{
-    background:linear-gradient(135deg,#1565c0,#42a5f5);
-    color:white;
-    padding:28px;
-    border-radius:20px;
-    text-align:center;
-    box-shadow:0 10px 25px #1565c033
+  background:linear-gradient(135deg,#1565c0,#42a5f5);
+  color:white;
+  padding:25px;
+  border-radius:18px;
+  text-align:center;
+  margin-bottom:20px;
+  box-shadow:0 5px 18px #0002;
 }
 
 header h1{
-    margin:0 0 8px;
-    font-size:30px
+  margin:0 0 8px;
 }
 
 header p{
-    margin:0
+  margin:0;
 }
 
 .grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    margin-top:20px
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
 }
 
 .card{
-    background:white;
-    padding:20px;
-    border-radius:18px;
-    box-shadow:0 6px 20px #17324d18
-}
-
-h2{
-    margin-top:0;
-    color:#1565c0
-}
-
-label{
-    font-weight:bold;
-    display:block;
-    margin:10px 0 6px
-}
-
-select,input{
-    width:100%;
-    padding:11px;
-    border:1px solid #ccd8e5;
-    border-radius:9px;
-    font-size:15px
-}
-
-button{
-    border:0;
-    border-radius:9px;
-    padding:11px 16px;
-    margin:8px 5px 0 0;
-    background:#1565c0;
-    color:white;
-    font-weight:bold;
-    cursor:pointer
-}
-
-button:hover{
-    background:#0d47a1
-}
-
-.secondary{
-    background:#43a047
-}
-
-.danger{
-    background:#e53935
-}
-
-.result{
-    margin-top:14px;
-    padding:14px;
-    background:#eef6ff;
-    border-left:5px solid #1565c0;
-    border-radius:8px;
-    min-height:45px
+  background:white;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 5px 18px #0002;
 }
 
 .full{
-    grid-column:1/-1
+  grid-column:1/-1;
 }
 
-/* CLEAN CITY MAP */
+h2{
+  margin-top:0;
+  color:#1565c0;
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  margin-bottom:6px;
+  font-weight:bold;
+}
+
+select,
+input{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccd8e5;
+  border-radius:8px;
+  font-size:15px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:12px;
+  border:none;
+  border-radius:8px;
+  background:#1565c0;
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+button.secondary{
+  background:#455a64;
+}
+
+button.danger{
+  background:#e53935;
+}
+
+.result{
+  margin-top:14px;
+  padding:14px;
+  background:#eef6ff;
+  border-left:5px solid #1565c0;
+  border-radius:8px;
+  min-height:45px;
+}
+
+/* MAP */
+
 .map{
-    position:relative;
-    height:430px;
-    border-radius:18px;
-    overflow:hidden;
-    background:linear-gradient(180deg,#e8f4df,#d9ecd0);
-    border:2px solid #b9d3ad;
+  position:relative;
+  height:430px;
+  border-radius:18px;
+  overflow:hidden;
+  background:linear-gradient(180deg,#e8f4df,#d9ecd0);
+  border:2px solid #b9d3ad;
 }
 
 .map svg{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:1;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:1;
 }
 
 .road{
-    fill:none;
-    stroke:#ffffff;
-    stroke-width:12;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-    filter:drop-shadow(0 2px 2px #0003);
+  fill:none;
+  stroke:white;
+  stroke-width:12;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 2px 2px #0003);
+  transition:stroke .2s,stroke-width .2s;
 }
 
 .road-line{
-    fill:none;
-    stroke:#d6d6d6;
-    stroke-width:2;
-    stroke-linecap:round;
+  fill:none;
+  stroke:#d6d6d6;
+  stroke-width:2;
+  stroke-linecap:round;
+}
+
+.route-road{
+  stroke:#ff4d6d !important;
+  stroke-width:9 !important;
 }
 
 .place{
-    position:absolute;
-    width:105px;
-    text-align:center;
-    z-index:5;
+  position:absolute;
+  z-index:3;
+  transform:translate(-50%,-50%);
+  width:90px;
+  height:65px;
+  pointer-events:none;
 }
 
 .pin{
-    width:30px;
-    height:30px;
-    margin:auto;
-    background:#1565c0;
-    border:4px solid white;
-    border-radius:50% 50% 50% 0;
-    transform:rotate(-45deg);
-    box-shadow:0 3px 8px #0004;
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:24px;
+  height:24px;
+  transform:translate(-50%,-50%);
+  background:#1565c0;
+  border:4px solid white;
+  border-radius:50%;
+  box-shadow:0 3px 8px #0004;
 }
 
 .pin:after{
-    content:"";
-    display:block;
-    width:8px;
-    height:8px;
-    background:white;
-    border-radius:50%;
-    position:absolute;
-    left:7px;
-    top:7px;
+  content:"";
+  position:absolute;
+  width:7px;
+  height:7px;
+  background:white;
+  border-radius:50%;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
 }
 
 .place span{
-    display:block;
-    margin-top:7px;
-    background:white;
-    color:#173b8f;
-    font-weight:bold;
-    font-size:12px;
-    padding:6px;
-    border-radius:8px;
-    box-shadow:0 2px 7px #0002;
+  position:absolute;
+  left:50%;
+  top:calc(50% + 17px);
+  transform:translateX(-50%);
+  white-space:nowrap;
+  background:white;
+  color:#173b8f;
+  font-weight:bold;
+  font-size:12px;
+  padding:5px 7px;
+  border-radius:7px;
+  box-shadow:0 2px 7px #0002;
 }
 
-.m1{left:5%;top:7%}
-.m2{left:40%;top:4%}
-.m3{right:5%;top:7%}
-.m4{left:8%;top:42%}
-.m5{left:42%;top:42%}
-.m6{right:6%;top:42%}
-.m7{left:6%;bottom:7%}
-.m8{right:6%;bottom:7%}
+/* Exact positions matching SVG coordinates */
 
-/* SAVED CONTACTS TABLE */
+.home{
+  left:13.75%;
+  top:19.7674%;
+}
+
+.school{
+  left:47.5%;
+  top:16.2791%;
+}
+
+.airport{
+  left:86.25%;
+  top:20.9302%;
+}
+
+.hospital{
+  left:18.125%;
+  top:50%;
+}
+
+.park{
+  left:50%;
+  top:50%;
+}
+
+.station{
+  left:83.125%;
+  top:50%;
+}
+
+.market{
+  left:15.625%;
+  top:80.2326%;
+}
+
+.mall{
+  left:84.375%;
+  top:80.2326%;
+}
+
+.legend{
+  margin-top:12px;
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:14px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.legend-line{
+  width:30px;
+  height:6px;
+  background:#d6d6d6;
+  border-radius:5px;
+}
+
+.legend-route{
+  width:30px;
+  height:6px;
+  background:#ff4d6d;
+  border-radius:5px;
+}
+
+/* TABLE */
+
 table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
 }
 
-th,td{
-    border:1px solid #ccd8e5;
-    padding:12px;
-    text-align:left;
+th,
+td{
+  border:1px solid #ccd8e5;
+  padding:10px;
+  text-align:left;
 }
 
 th{
-    background:#1565c0;
-    color:white;
+  background:#eef6ff;
+  color:#1565c0;
 }
 
-tr:nth-child(even){
-    background:#f5f9fd;
-}
+/* RESPONSIVE */
 
 @media(max-width:750px){
-    .grid{
-        grid-template-columns:1fr
-    }
+  .grid{
+    grid-template-columns:1fr;
+  }
 
-    .full{
-        grid-column:auto
-    }
+  .full{
+    grid-column:auto;
+  }
 
-    .map{
-        height:520px
-    }
+  .map{
+    height:500px;
+  }
 }
 </style>
 </head>
@@ -236,120 +317,252 @@ tr:nth-child(even){
 <div class="container">
 
 <header>
-<h1>🗺️ Route Finder & Contact Lookup</h1>
-<p>Graph Traversal + Hash Table Application</p>
+  <h1>🗺️ Route Finder & Contact Lookup</h1>
+  <p>Graph Traversal + Hash Table Application</p>
 </header>
 
 <div class="grid">
+
+<!-- ROUTE FINDER -->
 
 <section class="card">
 
 <h2>🚗 Route Finder</h2>
 
-<label>Start Location</label>
+<label for="start">Start Location</label>
 <select id="start"></select>
 
-<label>Destination</label>
+<label for="end">Destination</label>
 <select id="end"></select>
 
-<button onclick="findRoute('BFS')">BFS Shortest Route</button>
-<button class="secondary" onclick="findRoute('DFS')">DFS Route</button>
+<button onclick="findRoute('BFS')">
+  BFS Shortest Route
+</button>
+
+<button class="secondary" onclick="findRoute('DFS')">
+  DFS Route
+</button>
 
 <div id="routeResult" class="result">
-Select locations and choose a route method.
+  Select locations and choose a route method.
 </div>
 
 </section>
 
+
+<!-- CONTACT LOOKUP -->
 
 <section class="card">
 
-<h2>📞 Contact Lookup</h2>
+<h2>👥 Contact Lookup</h2>
 
-<label>Name</label>
-<input id="name" placeholder="Enter name">
+<label for="name">Name</label>
+<input id="name" type="text" placeholder="Enter name">
 
-<label>Phone</label>
-<input id="phone" placeholder="Enter phone">
+<label for="phone">Phone</label>
+<input id="phone" type="text" placeholder="Enter phone number">
 
-<label>Email</label>
-<input id="email" placeholder="Enter email">
+<label for="email">Email</label>
+<input id="email" type="email" placeholder="Enter email">
 
-<button onclick="addContact()">Add / Update</button>
-<button class="secondary" onclick="searchContact()">Search</button>
-<button class="danger" onclick="deleteContact()">Delete</button>
+<button onclick="addContact()">
+  Add / Update Contact
+</button>
+
+<button class="secondary" onclick="searchContact()">
+  Search Contact
+</button>
+
+<button class="danger" onclick="deleteContact()">
+  Delete Contact
+</button>
 
 <div id="contactResult" class="result">
-Add a contact or search for an existing contact.
+  Contact lookup result will appear here.
 </div>
 
 </section>
 
+
+<!-- CITY MAP -->
 
 <section class="card full">
 
 <h2>🏙️ City Map</h2>
 
-<div class="map" id="map">
+<div class="map">
 
-<svg viewBox="0 0 800 430" preserveAspectRatio="none" aria-label="City road map">
+<svg viewBox="0 0 800 430"
+     preserveAspectRatio="none"
+     aria-label="City road map">
 
-<path class="road" d="M110 85 L380 70"/>
-<path class="road-line" d="M110 85 L380 70"/>
+  <!-- Home - School -->
+  <path
+    class="road"
+    data-edge="Home|School"
+    d="M110 85 L380 70"/>
+  <path
+    class="road-line"
+    d="M110 85 L380 70"/>
 
-<path class="road" d="M110 85 L125 345"/>
-<path class="road-line" d="M110 85 L125 345"/>
+  <!-- Home - Market -->
+  <path
+    class="road"
+    data-edge="Home|Market"
+    d="M110 85 L125 345"/>
+  <path
+    class="road-line"
+    d="M110 85 L125 345"/>
 
-<path class="road" d="M380 70 L145 215"/>
-<path class="road-line" d="M380 70 L145 215"/>
+  <!-- School - Hospital -->
+  <path
+    class="road"
+    data-edge="Hospital|School"
+    d="M380 70 L145 215"/>
+  <path
+    class="road-line"
+    d="M380 70 L145 215"/>
 
-<path class="road" d="M380 70 L400 215"/>
-<path class="road-line" d="M380 70 L400 215"/>
+  <!-- School - Park -->
+  <path
+    class="road"
+    data-edge="Park|School"
+    d="M380 70 L400 215"/>
+  <path
+    class="road-line"
+    d="M380 70 L400 215"/>
 
-<path class="road" d="M125 345 L675 345"/>
-<path class="road-line" d="M125 345 L675 345"/>
+  <!-- Market - Mall -->
+  <path
+    class="road"
+    data-edge="Mall|Market"
+    d="M125 345 L675 345"/>
+  <path
+    class="road-line"
+    d="M125 345 L675 345"/>
 
-<path class="road" d="M125 345 L665 215"/>
-<path class="road-line" d="M125 345 L665 215"/>
+  <!-- Market - Station -->
+  <path
+    class="road"
+    data-edge="Market|Station"
+    d="M125 345 L665 215"/>
+  <path
+    class="road-line"
+    d="M125 345 L665 215"/>
 
-<path class="road" d="M145 215 L665 215"/>
-<path class="road-line" d="M145 215 L665 215"/>
+  <!-- Hospital - Station -->
+  <path
+    class="road"
+    data-edge="Hospital|Station"
+    d="M145 215 L665 215"/>
+  <path
+    class="road-line"
+    d="M145 215 L665 215"/>
 
-<path class="road" d="M400 215 L675 345"/>
-<path class="road-line" d="M400 215 L675 345"/>
+  <!-- Park - Mall -->
+  <path
+    class="road"
+    data-edge="Mall|Park"
+    d="M400 215 L675 345"/>
+  <path
+    class="road-line"
+    d="M400 215 L675 345"/>
 
-<path class="road" d="M675 345 L665 215"/>
-<path class="road-line" d="M675 345 L665 215"/>
+  <!-- Mall - Station -->
+  <path
+    class="road"
+    data-edge="Mall|Station"
+    d="M675 345 L665 215"/>
+  <path
+    class="road-line"
+    d="M675 345 L665 215"/>
 
-<path class="road" d="M665 215 L690 90"/>
-<path class="road-line" d="M665 215 L690 90"/>
+  <!-- Station - Airport -->
+  <path
+    class="road"
+    data-edge="Airport|Station"
+    d="M665 215 L690 90"/>
+  <path
+    class="road-line"
+    d="M665 215 L690 90"/>
 
 </svg>
 
-<div class="place m1"><div class="pin"></div><span>Home</span></div>
-<div class="place m2"><div class="pin"></div><span>School</span></div>
-<div class="place m3"><div class="pin"></div><span>Airport</span></div>
-<div class="place m4"><div class="pin"></div><span>Hospital</span></div>
-<div class="place m5"><div class="pin"></div><span>Park</span></div>
-<div class="place m6"><div class="pin"></div><span>Station</span></div>
-<div class="place m7"><div class="pin"></div><span>Market</span></div>
-<div class="place m8"><div class="pin"></div><span>Mall</span></div>
+
+<!-- LOCATIONS -->
+
+<div class="place home">
+  <div class="pin"></div>
+  <span>Home</span>
+</div>
+
+<div class="place school">
+  <div class="pin"></div>
+  <span>School</span>
+</div>
+
+<div class="place airport">
+  <div class="pin"></div>
+  <span>Airport</span>
+</div>
+
+<div class="place hospital">
+  <div class="pin"></div>
+  <span>Hospital</span>
+</div>
+
+<div class="place park">
+  <div class="pin"></div>
+  <span>Park</span>
+</div>
+
+<div class="place station">
+  <div class="pin"></div>
+  <span>Station</span>
+</div>
+
+<div class="place market">
+  <div class="pin"></div>
+  <span>Market</span>
+</div>
+
+<div class="place mall">
+  <div class="pin"></div>
+  <span>Mall</span>
+</div>
+
+</div>
+
+<div class="legend">
+
+  <div class="legend-item">
+    <span class="legend-line"></span>
+    Normal Road
+  </div>
+
+  <div class="legend-item">
+    <span class="legend-route"></span>
+    Selected Route
+  </div>
 
 </div>
 
 </section>
 
+
+<!-- CONTACT TABLE -->
 
 <section class="card full">
 
 <h2>👥 Saved Contacts</h2>
 
 <table>
+
 <thead>
 <tr>
-<th>Name</th>
-<th>Phone</th>
-<th>Email</th>
+  <th>Name</th>
+  <th>Phone</th>
+  <th>Email</th>
 </tr>
 </thead>
 
@@ -365,284 +578,677 @@ Add a contact or search for an existing contact.
 
 <script>
 
-const graph={
-Home:["School","Market"],
-School:["Home","Hospital","Park"],
-Market:["Home","Mall","Station"],
-Hospital:["School","Station"],
-Park:["School","Mall"],
-Mall:["Market","Park","Station"],
-Station:["Market","Hospital","Mall"],
-Airport:["Station"]
+/* =====================================================
+   ADJACENCY LIST
+   ===================================================== */
+
+const graph = {
+
+  Home: [
+    "School",
+    "Market"
+  ],
+
+  School: [
+    "Home",
+    "Hospital",
+    "Park"
+  ],
+
+  Market: [
+    "Home",
+    "Mall",
+    "Station"
+  ],
+
+  Hospital: [
+    "School",
+    "Station"
+  ],
+
+  Park: [
+    "School",
+    "Mall"
+  ],
+
+  Mall: [
+    "Market",
+    "Park",
+    "Station"
+  ],
+
+  Station: [
+    "Market",
+    "Hospital",
+    "Mall",
+    "Airport"
+  ],
+
+  Airport: [
+    "Station"
+  ]
+
 };
 
-const locations=Object.keys(graph);
+
+const locations = Object.keys(graph);
+
+
+/* =====================================================
+   LOAD LOCATIONS
+   ===================================================== */
 
 function loadLocations(){
 
-const s=document.getElementById("start");
-const e=document.getElementById("end");
+  const start = document.getElementById("start");
+  const end = document.getElementById("end");
 
-locations.forEach(x=>{
-    s.innerHTML+=`<option>${x}</option>`;
-    e.innerHTML+=`<option>${x}</option>`;
-});
+  locations.forEach(location => {
 
-e.value="Airport";
+    start.innerHTML +=
+      `<option value="${location}">${location}</option>`;
+
+    end.innerHTML +=
+      `<option value="${location}">${location}</option>`;
+
+  });
+
+  start.value = "Home";
+  end.value = "Airport";
 
 }
 
 loadLocations();
 
 
-function bfs(start,end){
+/* =====================================================
+   BFS
+   Shortest path by number of edges
+   ===================================================== */
 
-const q=[[start]];
-const seen=new Set([start]);
+function bfs(start, end){
 
-while(q.length){
+  if(start === end){
+    return [start];
+  }
 
-const path=q.shift();
-const node=path[path.length-1];
+  const queue = [[start]];
+  const visited = new Set([start]);
 
-if(node===end)return path;
+  while(queue.length > 0){
 
-graph[node].forEach(n=>{
+    const path = queue.shift();
+    const current = path[path.length - 1];
 
-if(!seen.has(n)){
-seen.add(n);
-q.push([...path,n]);
+    if(current === end){
+      return path;
+    }
+
+    for(const neighbour of graph[current]){
+
+      if(!visited.has(neighbour)){
+
+        visited.add(neighbour);
+
+        queue.push([
+          ...path,
+          neighbour
+        ]);
+
+      }
+
+    }
+
+  }
+
+  return null;
 }
 
-});
+
+/* =====================================================
+   DFS
+   ===================================================== */
+
+function dfs(start, end){
+
+  const visited = new Set();
+
+  function visit(current, path){
+
+    if(current === end){
+      return path;
+    }
+
+    visited.add(current);
+
+    for(const neighbour of graph[current]){
+
+      if(!visited.has(neighbour)){
+
+        const result = visit(
+          neighbour,
+          [...path, neighbour]
+        );
+
+        if(result){
+          return result;
+        }
+
+      }
+
+    }
+
+    return null;
+  }
+
+  return visit(start, [start]);
+}
+
+
+/* =====================================================
+   EDGE KEY
+   ===================================================== */
+
+function edgeKey(a,b){
+
+  return [a,b]
+    .sort()
+    .join("|");
 
 }
 
-return null;
+
+/* =====================================================
+   HIGHLIGHT ROUTE
+   ===================================================== */
+
+function highlightRoute(path){
+
+  document
+    .querySelectorAll(".road")
+    .forEach(road => {
+
+      road.classList.remove("route-road");
+
+    });
+
+
+  if(!path || path.length < 2){
+    return;
+  }
+
+
+  const requiredEdges = new Set();
+
+
+  for(let i = 0; i < path.length - 1; i++){
+
+    requiredEdges.add(
+      edgeKey(
+        path[i],
+        path[i + 1]
+      )
+    );
+
+  }
+
+
+  document
+    .querySelectorAll(".road")
+    .forEach(road => {
+
+      if(
+        requiredEdges.has(
+          road.dataset.edge
+        )
+      ){
+
+        road.classList.add(
+          "route-road"
+        );
+
+      }
+
+    });
 
 }
 
 
-function dfs(start,end){
-
-const seen=new Set();
-
-function visit(node,path){
-
-if(node===end)return path;
-
-seen.add(node);
-
-for(const n of graph[node])
-
-if(!seen.has(n)){
-
-const r=visit(n,[...path,n]);
-
-if(r)return r;
-
-}
-
-return null;
-
-}
-
-return visit(start,[start]);
-
-}
-
+/* =====================================================
+   FIND ROUTE
+   ===================================================== */
 
 function findRoute(method){
 
-const s=document.getElementById("start").value;
-const e=document.getElementById("end").value;
+  const start =
+    document.getElementById("start").value;
 
-const path=method==="BFS"?bfs(s,e):dfs(s,e);
+  const end =
+    document.getElementById("end").value;
 
-document.getElementById("routeResult").innerHTML=path?
 
-`<b>${method} Route:</b><br>
-📍 ${path.join(" → ")}<br>
-<small>${path.length-1} edge(s)</small>`
+  if(start === end){
 
-:
+    highlightRoute([start]);
 
-`❌ No route found between ${s} and ${e}.`;
+    document.getElementById(
+      "routeResult"
+    ).innerHTML =
+      `📍 Start and destination are the same: <b>${start}</b>.`;
+
+    return;
+  }
+
+
+  let path;
+
+
+  if(method === "BFS"){
+
+    path = bfs(start, end);
+
+  }else{
+
+    path = dfs(start, end);
+
+  }
+
+
+  highlightRoute(path);
+
+
+  if(path){
+
+    document.getElementById(
+      "routeResult"
+    ).innerHTML =
+
+      `<b>${method} Route:</b>
+       <br>
+       📍 ${path.join(" → ")}
+       <br>
+       <small>
+       ${path.length - 1} edge(s)
+       </small>`;
+
+  }else{
+
+    document.getElementById(
+      "routeResult"
+    ).innerHTML =
+
+      `❌ No route found between
+       <b>${start}</b> and
+       <b>${end}</b>.`;
+
+  }
 
 }
 
+
+/* =====================================================
+   HASH TABLE
+   ===================================================== */
 
 class HashTable{
 
-constructor(size=7){
+  constructor(size = 7){
 
-this.size=size;
-this.table=Array.from({length:size},()=>[]);
+    this.size = size;
+
+    this.table =
+      Array.from(
+        {length:size},
+        () => []
+      );
+
+  }
+
+
+  hash(key){
+
+    let hashValue = 0;
+
+    for(const character of key.toLowerCase()){
+
+      hashValue +=
+        character.charCodeAt(0);
+
+    }
+
+    return hashValue % this.size;
+
+  }
+
+
+  insert(contact){
+
+    const bucket =
+      this.table[
+        this.hash(contact.name)
+      ];
+
+
+    const index =
+      bucket.findIndex(
+        item =>
+          item.name.toLowerCase() ===
+          contact.name.toLowerCase()
+      );
+
+
+    if(index >= 0){
+
+      bucket[index] = contact;
+
+    }else{
+
+      bucket.push(contact);
+
+    }
+
+  }
+
+
+  search(name){
+
+    const bucket =
+      this.table[
+        this.hash(name)
+      ];
+
+
+    return bucket.find(
+      contact =>
+        contact.name.toLowerCase() ===
+        name.toLowerCase()
+    );
+
+  }
+
+
+  delete(name){
+
+    const bucket =
+      this.table[
+        this.hash(name)
+      ];
+
+
+    const index =
+      bucket.findIndex(
+        contact =>
+          contact.name.toLowerCase() ===
+          name.toLowerCase()
+      );
+
+
+    if(index < 0){
+      return false;
+    }
+
+
+    bucket.splice(index,1);
+
+    return true;
+
+  }
+
+
+  all(){
+
+    return this.table.flat();
+
+  }
 
 }
 
-hash(key){
 
-let h=0;
+const contacts = new HashTable();
 
-for(const c of key.toLowerCase())
-h+=c.charCodeAt(0);
 
-return h%this.size;
+/* =====================================================
+   CONTACT FUNCTIONS
+   ===================================================== */
 
-}
+function getContactFields(){
 
-insert(c){
+  return {
 
-const b=this.table[this.hash(c.name)];
+    name:
+      document
+        .getElementById("name")
+        .value
+        .trim(),
 
-const i=b.findIndex(
-x=>x.name.toLowerCase()===c.name.toLowerCase()
-);
+    phone:
+      document
+        .getElementById("phone")
+        .value
+        .trim(),
 
-if(i>=0)
-b[i]=c;
-else
-b.push(c);
+    email:
+      document
+        .getElementById("email")
+        .value
+        .trim()
 
-}
-
-search(name){
-
-return this.table[this.hash(name)].find(
-x=>x.name.toLowerCase()===name.toLowerCase()
-);
-
-}
-
-delete(name){
-
-const b=this.table[this.hash(name)];
-
-const i=b.findIndex(
-x=>x.name.toLowerCase()===name.toLowerCase()
-);
-
-if(i<0)return false;
-
-b.splice(i,1);
-
-return true;
-
-}
-
-all(){
-
-return this.table.flat();
-
-}
+  };
 
 }
 
 
-const contacts=new HashTable();
-
-
-function fields(){
-
-return{
-
-name:document.getElementById("name").value.trim(),
-
-phone:document.getElementById("phone").value.trim(),
-
-email:document.getElementById("email").value.trim()
-
-};
-
-}
-
+/* ADD / UPDATE */
 
 function addContact(){
 
-const c=fields();
+  const contact =
+    getContactFields();
 
-if(!c.name){
 
-msg("Please enter a name.");
+  if(!contact.name){
 
-return;
+    showContactMessage(
+      "❌ Please enter a name."
+    );
+
+    return;
+  }
+
+
+  if(!contact.phone){
+
+    showContactMessage(
+      "❌ Please enter a phone number."
+    );
+
+    return;
+  }
+
+
+  if(!contact.email){
+
+    showContactMessage(
+      "❌ Please enter an email."
+    );
+
+    return;
+  }
+
+
+  contacts.insert(contact);
+
+
+  showContactMessage(
+    "✅ Contact saved successfully."
+  );
+
+
+  renderContacts();
 
 }
 
-contacts.insert(c);
 
-msg("✅ Contact saved successfully.");
-
-renderContacts();
-
-}
-
+/* SEARCH */
 
 function searchContact(){
 
-const n=document.getElementById("name").value.trim();
+  const name =
+    document
+      .getElementById("name")
+      .value
+      .trim();
 
-const c=contacts.search(n);
 
-msg(
-c
-?
-`<b>${c.name}</b><br>
-📞 ${c.phone}<br>
-✉️ ${c.email}`
-:
-"❌ Contact not found."
-);
+  if(!name){
+
+    showContactMessage(
+      "❌ Please enter a name to search."
+    );
+
+    return;
+  }
+
+
+  const contact =
+    contacts.search(name);
+
+
+  if(contact){
+
+    document.getElementById("phone").value =
+      contact.phone;
+
+    document.getElementById("email").value =
+      contact.email;
+
+
+    showContactMessage(
+
+      `<b>${contact.name}</b>
+       <br>
+       📞 ${contact.phone}
+       <br>
+       ✉️ ${contact.email}`
+
+    );
+
+  }else{
+
+    showContactMessage(
+      "❌ Contact not found."
+    );
+
+  }
 
 }
 
+
+/* DELETE */
 
 function deleteContact(){
 
-const n=document.getElementById("name").value.trim();
+  const name =
+    document
+      .getElementById("name")
+      .value
+      .trim();
 
-msg(
-contacts.delete(n)
-?
-"🗑️ Contact deleted."
-:
-"❌ Contact not found."
-);
 
-renderContacts();
+  if(!name){
+
+    showContactMessage(
+      "❌ Please enter a name to delete."
+    );
+
+    return;
+  }
+
+
+  const deleted =
+    contacts.delete(name);
+
+
+  if(deleted){
+
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+    document.getElementById("email").value = "";
+
+
+    showContactMessage(
+      "🗑️ Contact deleted successfully."
+    );
+
+  }else{
+
+    showContactMessage(
+      "❌ Contact not found."
+    );
+
+  }
+
+
+  renderContacts();
 
 }
 
 
-function msg(x){
+/* MESSAGE */
 
-document.getElementById("contactResult").innerHTML=x;
+function showContactMessage(message){
+
+  document.getElementById(
+    "contactResult"
+  ).innerHTML = message;
 
 }
 
+
+/* =====================================================
+   RENDER CONTACT TABLE
+   ===================================================== */
 
 function renderContacts(){
 
-document.getElementById("contactTable").innerHTML=
+  const table =
+    document.getElementById(
+      "contactTable"
+    );
 
-contacts.all().map(c=>
 
-`<tr>
-<td>${c.name}</td>
-<td>${c.phone}</td>
-<td>${c.email}</td>
-</tr>`
+  const allContacts =
+    contacts.all();
 
-).join("")
 
-||
+  if(allContacts.length === 0){
 
-`<tr>
-<td colspan="3">No contacts saved.</td>
-</tr>`;
+    table.innerHTML =
+      `<tr>
+        <td colspan="3">
+          No contacts saved.
+        </td>
+       </tr>`;
+
+    return;
+  }
+
+
+  table.innerHTML =
+    allContacts
+      .map(contact =>
+
+        `<tr>
+          <td>${contact.name}</td>
+          <td>${contact.phone}</td>
+          <td>${contact.email}</td>
+        </tr>`
+
+      )
+      .join("");
 
 }
+
 
 renderContacts();
 
