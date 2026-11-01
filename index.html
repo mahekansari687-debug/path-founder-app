@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Route Finder & Contact Lookup</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eaf4ff,#f7fbff);color:#17324d}
+.container{max-width:1050px;margin:auto;padding:24px}
+header{background:linear-gradient(135deg,#1565c0,#42a5f5);color:white;padding:28px;border-radius:20px;text-align:center;box-shadow:0 10px 25px #1565c033}
+header h1{margin:0 0 8px;font-size:30px}header p{margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+.card{background:white;padding:20px;border-radius:18px;box-shadow:0 6px 20px #17324d18}
+h2{margin-top:0;color:#1565c0}label{font-weight:bold;display:block;margin:10px 0 6px}
+select,input{width:100%;padding:11px;border:1px solid #ccd8e5;border-radius:9px;font-size:15px}
+button{border:0;border-radius:9px;padding:11px 16px;margin:8px 5px 0 0;background:#1565c0;color:white;font-weight:bold;cursor:pointer}
+button:hover{background:#0d47a1}.secondary{background:#43a047}.danger{background:#e53935}
+.result{margin-top:14px;padding:14px;background:#eef6ff;border-left:5px solid #1565c0;border-radius:8px;min-height:45px}
+.full{grid-column:1/-1}
+/* CLEAN CITY MAP */
+.map{
+    position:relative;
+    height:430px;
+    border-radius:18px;
+    overflow:hidden;
+    background:linear-gradient(180deg,#e8f4df,#d9ecd0);
+    border:2px solid #b9d3ad;
+}
+.map svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:1;
+}
+.road{
+    fill:none;
+    stroke:#ffffff;
+    stroke-width:12;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    filter:drop-shadow(0 2px 2px #0003);
+}
+.road-line{
+    fill:none;
+    stroke:#d6d6d6;
+    stroke-width:2;
+    stroke-linecap:round;
+}
+.place{
+    position:absolute;
+    width:105px;
+    text-align:center;
+    z-index:5;
+}
+.pin{
+    width:30px;
+    height:30px;
+    margin:auto;
+    background:#1565c0;
+    border:4px solid white;
+    border-radius:50% 50% 50% 0;
+    transform:rotate(-45deg);
+    box-shadow:0 3px 8px #0004;
+}
+.pin:after{
+    content:"";
+    display:block;
+    width:8px;
+    height:8px;
+    background:white;
+    border-radius:50%;
+    position:absolute;
+    left:7px;
+    top:7px;
+}
+.place span{
+    display:block;
+    margin-top:7px;
+    background:white;
+    color:#173b8f;
+    font-weight:bold;
+    font-size:12px;
+    padding:6px;
+    border-radius:8px;
+    box-shadow:0 2px 7px #0002;
+}
+.m1{left:5%;top:7%}
+.m2{left:40%;top:4%}
+.m3{right:5%;top:7%}
+.m4{left:8%;top:42%}
+.m5{left:42%;top:42%}
+.m6{right:6%;top:42%}
+.m7{left:6%;bottom:7%}
+.m8{right:6%;bottom:7%}
+
+@media(max-width:750px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.map{height:520px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header><h1>🗺️ Route Finder & Contact Lookup</h1><p>Graph Traversal + Hash Table Application</p></header>
+
+<div class="grid">
+<section class="card">
+<h2>🚗 Route Finder</h2>
+<label>Start Location</label><select id="start"></select>
+<label>Destination</label><select id="end"></select>
+<button onclick="findRoute('BFS')">BFS Shortest Route</button>
+<button class="secondary" onclick="findRoute('DFS')">DFS Route</button>
+<div id="routeResult" class="result">Select locations and choose a route method.</div>
+</section>
+
+<section class="card">
+<h2>📞 Contact Lookup</h2>
+<label>Name</label><input id="name" placeholder="Enter name">
+<label>Phone</label><input id="phone" placeholder="Enter phone">
+<label>Email</label><input id="email" placeholder="Enter email">
+<button onclick="addContact()">Add / Update</button>
+<button class="secondary" onclick="searchContact()">Search</button>
+<button class="danger" onclick="deleteContact()">Delete</button>
+<div id="contactResult" class="result">Add a contact or search for an existing contact.</div>
+</section>
+
+<section class="card full">
+<h2>🏙️ City Map</h2>
+<div class="map" id="map">
+
+    <!-- Roads match the graph connections -->
+    <svg viewBox="0 0 800 430" preserveAspectRatio="none" aria-label="City road map">
+
+        <path class="road" d="M110 85 L380 70"/>
+        <path class="road-line" d="M110 85 L380 70"/>
+
+        <path class="road" d="M110 85 L125 345"/>
+        <path class="road-line" d="M110 85 L125 345"/>
+
+        <path class="road" d="M380 70 L145 215"/>
+        <path class="road-line" d="M380 70 L145 215"/>
+
+        <path class="road" d="M380 70 L400 215"/>
+        <path class="road-line" d="M380 70 L400 215"/>
+
+        <path class="road" d="M125 345 L675 345"/>
+        <path class="road-line" d="M125 345 L675 345"/>
+
+        <path class="road" d="M125 345 L665 215"/>
+        <path class="road-line" d="M125 345 L665 215"/>
+
+        <path class="road" d="M145 215 L665 215"/>
+        <path class="road-line" d="M145 215 L665 215"/>
+
+        <path class="road" d="M400 215 L675 345"/>
+        <path class="road-line" d="M400 215 L675 345"/>
+
+        <path class="road" d="M675 345 L665 215"/>
+        <path class="road-line" d="M675 345 L665 215"/>
+
+        <path class="road" d="M665 215 L690 90"/>
+        <path class="road-line" d="M665 215 L690 90"/>
+
+    </svg>
+
+    <div class="place m1"><div class="pin"></div><span>Home</span></div>
+    <div class="place m2"><div class="pin"></div><span>School</span></div>
+    <div class="place m3"><div class="pin"></div><span>Airport</span></div>
+    <div class="place m4"><div class="pin"></div><span>Hospital</span></div>
+    <div class="place m5"><div class="pin"></div><span>Park</span></div>
+    <div class="place m6"><div class="pin"></div><span>Station</span></div>
+    <div class="place m7"><div class="pin"></div><span>Market</span></div>
+    <div class="place m8"><div class="pin"></div><span>Mall</span></div>
+
+</div>
+
+</section>
+
+<section class="card full">
+<h2>👥 Saved Contacts</h2>
+<table><thead><tr><th>Name</th><th>Phone</th><th>Email</th></tr></thead>
+<tbody id="contactTable"></tbody></table>
+</section>
+</div>
+</div>
+
+<script>
+const graph={
+Home:["School","Market"],
+School:["Home","Hospital","Park"],
+Market:["Home","Mall","Station"],
+Hospital:["School","Station"],
+Park:["School","Mall"],
+Mall:["Market","Park","Station"],
+Station:["Market","Hospital","Mall"],
+Airport:["Station"]
+};
+const locations=Object.keys(graph);
+
+function loadLocations(){
+ const s=document.getElementById("start"),e=document.getElementById("end");
+ locations.forEach(x=>{s.innerHTML+=`<option>${x}</option>`;e.innerHTML+=`<option>${x}</option>`});
+ e.value="Airport";
+}
+loadLocations();
+
+function bfs(start,end){
+ const q=[[start]],seen=new Set([start]);
+ while(q.length){
+  const path=q.shift(),node=path[path.length-1];
+  if(node===end)return path;
+  graph[node].forEach(n=>{if(!seen.has(n)){seen.add(n);q.push([...path,n])}});
+ }
+ return null;
+}
+function dfs(start,end){
+ const seen=new Set();
+ function visit(node,path){
+  if(node===end)return path;
+  seen.add(node);
+  for(const n of graph[node])if(!seen.has(n)){const r=visit(n,[...path,n]);if(r)return r}
+  return null;
+ }
+ return visit(start,[start]);
+}
+function findRoute(method){
+ const s=document.getElementById("start").value,e=document.getElementById("end").value;
+ const path=method==="BFS"?bfs(s,e):dfs(s,e);
+ document.getElementById("routeResult").innerHTML=path?
+ `<b>${method} Route:</b><br>📍 ${path.join(" → ")}<br><small>${path.length-1} edge(s)</small>`:
+ `❌ No route found between ${s} and ${e}.`;
+}
+
+class HashTable{
+ constructor(size=7){this.size=size;this.table=Array.from({length:size},()=>[])}
+ hash(key){let h=0;for(const c of key.toLowerCase())h+=c.charCodeAt(0);return h%this.size}
+ insert(c){const b=this.table[this.hash(c.name)];const i=b.findIndex(x=>x.name.toLowerCase()===c.name.toLowerCase());if(i>=0)b[i]=c;else b.push(c)}
+ search(name){return this.table[this.hash(name)].find(x=>x.name.toLowerCase()===name.toLowerCase())}
+ delete(name){const b=this.table[this.hash(name)],i=b.findIndex(x=>x.name.toLowerCase()===name.toLowerCase());if(i<0)return false;b.splice(i,1);return true}
+ all(){return this.table.flat()}
+}
+const contacts=new HashTable();
+
+function fields(){
+ return {name:document.getElementById("name").value.trim(),phone:document.getElementById("phone").value.trim(),email:document.getElementById("email").value.trim()}
+}
+function addContact(){
+ const c=fields();if(!c.name){msg("Please enter a name.");return}
+ contacts.insert(c);msg("✅ Contact saved successfully.");renderContacts();
+}
+function searchContact(){
+ const n=document.getElementById("name").value.trim(),c=contacts.search(n);
+ msg(c?`<b>${c.name}</b><br>📞 ${c.phone}<br>✉️ ${c.email}`:"❌ Contact not found.");
+}
+function deleteContact(){
+ const n=document.getElementById("name").value.trim();
+ msg(contacts.delete(n)?"🗑️ Contact deleted.":"❌ Contact not found.");renderContacts();
+}
+function msg(x){document.getElementById("contactResult").innerHTML=x}
+function renderContacts(){
+ document.getElementById("contactTable").innerHTML=contacts.all().map(c=>`<tr><td>${c.name}</td><td>${c.phone}</td><td>${c.email}</td></tr>`).join("")||`<tr><td colspan="3">No contacts saved.</td></tr>`;
+}
+renderContacts();
+</script>
+</body>
+</html>
